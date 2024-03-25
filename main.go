@@ -8,7 +8,14 @@ import (
 )
 
 func main() {
-	component := hello("John")
+
+    content := "./content/pages/home.md";
+    html := parseMdToHtml(content) 
+      //bytes to string
+    stringHtml := string(html)
+    
+
+	component := pageFromMarkdown(stringHtml)
 	
 	http.Handle("/", templ.Handler(component))
 
