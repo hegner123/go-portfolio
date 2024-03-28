@@ -8,14 +8,13 @@ import (
 )
 
 func main() {
-
+    fmt.Println("--------------------------------------------------------------------------------------------------")
     content := "./content/pages/home.md";
-    html := parseMdToHtml(content) 
-      //bytes to string
-    stringHtml := string(html)
-    
 
-	component := pageFromMarkdown(stringHtml)
+     parseTinaMd(content)
+   //fmt.Println(tinaList) 
+
+	component := pageFromMarkdown("john")
 	
 	http.Handle("/", templ.Handler(component))
 
