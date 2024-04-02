@@ -9,7 +9,7 @@ import (
 
 func parseTinaMd(content string) []KeyValue  {
 
-    slicedBytes := parseMdByBytes(content)
-    tinaKeyValues := parseTinaKeyValues(slicedBytes)
+    slicedBytes, stringFile := parseMdByBytes(content)
+    tinaKeyValues := parseTinaKeyValues(slicedBytes, stringFile)
     return tinaKeyValues
 }

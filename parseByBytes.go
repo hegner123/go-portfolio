@@ -24,11 +24,13 @@ var currentVal string
 var tokenStatus string = "stop"
 var tokenList []string
 
-func parseMdByBytes(filePath string) []string {
+func parseMdByBytes(filePath string) ([]string, string){
 	file, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Println(err)
 	}
+
+    stringFile := string(file)
 
 	scanner := bufio.NewScanner(strings.NewReader(string(file)))
 	scanner.Split(bufio.ScanBytes)
@@ -39,7 +41,7 @@ func parseMdByBytes(filePath string) []string {
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading input:", err)
 	}
-	return tokenList
+	return tokenList, stringFile
 }
 
 func parseBytes(tokenArg string) {
