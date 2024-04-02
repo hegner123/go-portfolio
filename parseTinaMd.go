@@ -7,7 +7,7 @@ import (
 )
 
 
-func parseTinaMd(content string) []KeyValue {
+func parseTinaMd(content string) []KeyValue  {
 
     slicedBytes := parseMdByBytes(content)
     tinaKeyValues := parseTinaKeyValues(slicedBytes)
