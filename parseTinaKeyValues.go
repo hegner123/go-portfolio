@@ -18,16 +18,16 @@ type Stack struct {
 
 type KeyValue struct {
 	Key   string
-	Value string
+	Value string 
 }
 
 type CaptureZone struct {
-    Start   int
-    Stop    int
+	Start int
+	Stop  int
 }
 
 type Zones struct {
-    Zone []CaptureZone
+	Zone []CaptureZone
 }
 
 var tokens []string
@@ -43,105 +43,82 @@ var keyRegex = regexp.MustCompile(`(\B- {1}|\b)(?:[a-z]([^'https]|\n)[a-zA-Z]+:)
 var nestedRegex = regexp.MustCompile(`^[-]`)
 var textValueRegex = regexp.MustCompile(`\>`)
 
-func (s *Stack) Push(item interface{}) {
-	s.items = append(s.items, item)
+
+type Queue struct {
+    items []string
 }
 
-func (s *Stack) Pop() interface{} {
-	if len(s.items) == 0 {
-		return nil
-	}
-	item := s.items[len(s.items)-1]
-	s.items = s.items[:len(s.items)-1]
-	return item
+func (q *Queue) Enqueue(item string) {
+    q.items = append(q.items, item)
 }
 
-func (s *Stack) Peek() interface{} {
-	if len(s.items) == 0 {
-		return nil
-	}
-	return s.items[len(s.items)-1]
+func (q *Queue) Dequeue() string {
+    if len(q.items) == 0 {
+        return ""
+    }
+    item := q.items[0]
+    q.items = q.items[1:]
+    return item
 }
 
-func (s *Stack) IsEmpty() bool {
-	return len(s.items) == 0
+func (q *Queue) Length() int {
+    return len(q.items)
 }
 
 func parseTinaKeyValues(slicedBytes []string, file string) []KeyValue {
-	keyStack := new(Stack)
-    valueStack := new(Stack)
+	keyQueue := new(Queue)
+	valueQueue := new(Queue)
 	//toParse := strings.Join(slicedBytes, " ")
 	keySlice := keyRegex.FindAllString(file, -1)
-    keyIndexes := keyRegex.FindAllStringIndex(file, -1)
-    zones := createCaptureZones(keyIndexes)
+	keyIndexes := keyRegex.FindAllStringIndex(file, -1)
+	zones := createCaptureZones(keyIndexes)
 
-	keyValue := KeyValue{
-		Key:   key,
-		Value: value,
-	}
-	keyValues = append(keyValues, keyValue)
-	key = ""
 	for _, key := range keySlice {
 		// fmt.Println(key)
-		keyStack.Push(key)
+		keyQueue.Enqueue(key)
 
 	}
 
-    for _, zone := range zones {
-        value := captureText(zone[0], zone[1], slicedBytes)
-        valueStack.Push(value)
+	for _, zone := range zones {
+        value := captureText(zone.Start+1, zone.Stop-1, file)
+        if value != "\n"{
+        valueQueue.Enqueue(value)
+        }
+
+	}
+
+    for i:=0; i<keyQueue.Length();{
+        keyValue := KeyValue{
+            Key: keyQueue.Dequeue(),
+            Value: valueQueue.Dequeue(),
+        }
+        keyValues = append(keyValues,keyValue )
     }
 
 	return keyValues
 }
 
-func createCaptureZones(keyIndexes [][]int) [][]int {
-     
-    textZones := make(Zones)
-    
-    for i:=0; i < len(keyIndexes);i = i + 2{
-        textCaptureZone := CaptureZone{ 
-            Start:keyIndexes[i][1],
-            Stop:keyIndexes[i][0],
-        }
-        textZones = append(textZones, textCaptureZone)
-    }
-
-    return 
+func createCaptureZones(keyIndexes [][]int) []CaptureZone {
+	textZones := make([]CaptureZone, 0)
+	for i := 1; i < len(keyIndexes); i++ {
+		textCaptureZone := CaptureZone{
+			Start: keyIndexes[i-1][1],
+			Stop:  keyIndexes[i][0],
+		}
+		textZones = append(textZones, textCaptureZone)
+	}
+	return textZones
 }
 
-
-func captureText(start int, stop int, slicedBytes []string) string {
+func captureText(start int, stop int, file string) string {
 	text := ""
 	for i := start; i < stop; i++ {
-			text = text + slicedBytes[i] + " "
+		text = text + string(file[i])
 	}
 	return text
 
 }
 
-func printStartEnd() {
-	if !parseStart {
-		parseStart = true
-		fmt.Println("ParseStart", parseStart)
-	} else {
-		parseEnd = true
-		fmt.Println("ParseEnd", parseEnd)
-
-	}
-}
-
-func appendKeyValue(key string, value string) {
-	if parseValueAsMarkdown {
-		value = string(mdToHTML([]byte(value)))
-	}
-
-	keyValue := KeyValue{
-		Key:   key,
-		Value: value,
-	}
-	keyValues = append(keyValues, keyValue)
-}
 
 func mdToHTML(md []byte) []byte {
 	// create markdown parser with extensions
@@ -162,3 +139,5 @@ func mdToHTML(md []byte) []byte {
 
 	return markdown.Render(doc, renderer)
 }
+
+

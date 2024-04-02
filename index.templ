@@ -1,5 +1,27 @@
 package main
 
-templ pageFromMarkdown(html string) {
-    { html }
+
+
+templ pageFromMarkdown(content []KeyValue) {
+    <html>
+    <head>
+
+    <style>
+    html {
+        color:#ffffff;
+        background:#2f2f2f;
+        font-family: sans-serif;
+        }
+
+    </style>
+    <title>Michael Hegner</title>
+    </head>
+    <body>
+    for _, item := range content{
+        <p>{item.Key} {item.Value}</p>
+
+        }
+    </body>
+        
+    </html>
 }

@@ -11,10 +11,10 @@ func main() {
     fmt.Println("--------------------------------------------------------------------------------------------------")
     content := "./content/pages/home.md";
 
-     parseTinaMd(content)
+    p := parseTinaMd(content)
    //fmt.Println(tinaList) 
-
-	component := pageFromMarkdown("john")
+    
+	component := pageFromMarkdown(p)
 	
 	http.Handle("/", templ.Handler(component))
 
