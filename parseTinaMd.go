@@ -3,10 +3,10 @@ package main
 //import "fmt"
 
 
-func parseTinaMd(content string) []KeyValue  {
+func parseTinaMd(content string) map[string]interface{}  {
 
-    slicedBytes, stringFile := parseMdByBytes(content)
-    tinaKeyValues := parseTinaKeyValues(slicedBytes, stringFile)
+     stringFile := parseMdByBytes(content)
+    tinaKeyValues := parseTinaKeyValues( stringFile)
     
     return tinaKeyValues
 }

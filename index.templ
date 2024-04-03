@@ -2,7 +2,7 @@ package main
 
 
 
-templ pageFromMarkdown(content []KeyValue) {
+templ pageFromMarkdown(content map[string]interface{}) {
     <html>
     <head>
 
@@ -17,10 +17,7 @@ templ pageFromMarkdown(content []KeyValue) {
     <title>Michael Hegner</title>
     </head>
     <body>
-    for _, item := range content{
-        <p>{item.Key} {item.Value}</p>
 
-        }
     </body>
         
     </html>

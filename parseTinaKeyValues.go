@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	//"strings"
+
+	//	"slices"
+	"strings"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
@@ -12,13 +14,18 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-type Stack struct {
-	items []interface{}
-}
+// Define a new type for the enum
+type Nesting int
 
-type KeyValue struct {
-	Key   string
-	Value string 
+// Define enum values using the const keyword and iota for sequential values
+const (
+    Root Nesting = iota
+    Depth
+    Close
+)
+
+type Queue struct {
+	items []string
 }
 
 type CaptureZone struct {
@@ -30,72 +37,71 @@ type Zones struct {
 	Zone []CaptureZone
 }
 
-var tokens []string
-var parseStart bool
-var parseEnd bool
-var key string
 var parseValueAsMarkdown bool
-var value string
-var keyValues []KeyValue
-var printAst = false
+
+var printAst bool
 var fileRegex = regexp.MustCompile(`(---)[^===][a-zA-Z1-9]*(---)`)
 var keyRegex = regexp.MustCompile(`(\B- {1}|\b)(?:[a-z]([^'https]|\n)[a-zA-Z]+:)`)
-var nestedRegex = regexp.MustCompile(`^[-]`)
-var textValueRegex = regexp.MustCompile(`\>`)
-
-
-type Queue struct {
-    items []string
-}
 
 func (q *Queue) Enqueue(item string) {
-    q.items = append(q.items, item)
+	q.items = append(q.items, item)
 }
 
 func (q *Queue) Dequeue() string {
-    if len(q.items) == 0 {
-        return ""
-    }
-    item := q.items[0]
-    q.items = q.items[1:]
-    return item
+	if len(q.items) == 0 {
+		return ""
+	}
+	item := q.items[0]
+	q.items = q.items[1:]
+	return item
 }
 
 func (q *Queue) Length() int {
-    return len(q.items)
+	return len(q.items)
 }
 
-func parseTinaKeyValues(slicedBytes []string, file string) []KeyValue {
+func toString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func parseTinaKeyValues(file string) map[string]interface{} {
 	keyQueue := new(Queue)
 	valueQueue := new(Queue)
-	//toParse := strings.Join(slicedBytes, " ")
 	keySlice := keyRegex.FindAllString(file, -1)
 	keyIndexes := keyRegex.FindAllStringIndex(file, -1)
 	zones := createCaptureZones(keyIndexes)
 
 	for _, key := range keySlice {
-		// fmt.Println(key)
-		keyQueue.Enqueue(key)
+		k := strings.TrimSuffix(key, ":")
+		keyQueue.Enqueue(k)
 
 	}
 
 	for _, zone := range zones {
-        value := captureText(zone.Start+1, zone.Stop-1, file)
-        if value != "\n"{
-        valueQueue.Enqueue(value)
-        }
+		value := captureText(zone.Start+1, zone.Stop-1, file)
+		if value != "\n" {
+			valueQueue.Enqueue(value)
+		}
 
 	}
+	fields := make(map[string]interface{})
 
-    for i:=0; i<keyQueue.Length();{
-        keyValue := KeyValue{
-            Key: keyQueue.Dequeue(),
-            Value: valueQueue.Dequeue(),
-        }
-        keyValues = append(keyValues,keyValue )
-    }
+    //nested := make(map[string]interface{})
 
-	return keyValues
+	for i := 0; i < keyQueue.Length(); {
+		v := valueQueue.Dequeue()
+		s := toString(&v)
+		k := keyQueue.Dequeue()
+        //parent := ""
+		//n := Root
+		fields[k] = s
+	
+	}
+	fmt.Println(fields)
+	return fields
 }
 
 func createCaptureZones(keyIndexes [][]int) []CaptureZone {
@@ -119,7 +125,6 @@ func captureText(start int, stop int, file string) string {
 
 }
 
-
 func mdToHTML(md []byte) []byte {
 	// create markdown parser with extensions
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
@@ -139,5 +144,3 @@ func mdToHTML(md []byte) []byte {
 
 	return markdown.Render(doc, renderer)
 }
-
-
