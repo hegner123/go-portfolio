@@ -11,31 +11,6 @@ import (
 //	"github.com/gomarkdown/markdown/parser"
 )
 
-type pageFromMd struct {
-    file string
-    heroTitle string
-    subtitle string
-    aboutTitle string
-    aboutBioMD string
-    projectsTitle string
-    projects []project
-    blogTitle string
-    blogPosts []blogPost
-}
-
-type project struct {
-    title string
-    descriptionMD string
-    siteLink string
-    githubLink string
-    image string
-}
-
-type blogPost struct {
-    title string
-    date string
-    contentMD string
-}
 
 func parseMdToHtml(filePath string) string {
     // Read the file contents

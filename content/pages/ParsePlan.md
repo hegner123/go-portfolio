@@ -13,5 +13,15 @@
 4. return token list
 
 
+# Parsing Rules
+
+- values that start with > are to be rendered as Markdown
+
+- keys without values are either empty or a parent of child objects
+
+- values that start with - designate the start of nested properties
+
+- nesting ends when a value has a - 
+
 
 

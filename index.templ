@@ -2,7 +2,7 @@ package main
 
 
 
-templ pageFromMarkdown(content map[string]interface{}) {
+templ portfolio(page PortfolioPage) {
     <html>
     <head>
 
@@ -18,7 +18,41 @@ templ pageFromMarkdown(content map[string]interface{}) {
     </head>
     <body>
 
+    @heroTitle(page.HeroTitle, page.Subtitle)
+    @aboutSection(page.AboutTitle, page.AboutBio) 
+        
+
     </body>
         
     </html>
 }
+
+
+templ heroTitle(heroTitle string, subtitle string){
+    <h1>{heroTitle}</h1>
+    <h3>{subtitle}</h3>
+
+    }
+
+
+
+templ aboutSection(aboutTitle string, aboutBio string){
+    <section>
+    <h3>{aboutTitle}</h3>
+    <p>
+        {aboutBio}
+    </p>
+    </section>
+
+    }
+
+
+
+
+
+
+
+
+
+
+
