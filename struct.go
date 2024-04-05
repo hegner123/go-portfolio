@@ -8,9 +8,9 @@ type Pages struct {
 	PagesConnection Edges `json:"pagesConnection"`
 }
 
-// type Edges struct {
-//	Edges []Node `json:"edges"`
-//}
+ type Edges struct {
+	Edges []Node `json:"edges"`
+}
 
 type Node struct {
 	Node PortfolioPage `json:"node"`
