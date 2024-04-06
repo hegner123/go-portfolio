@@ -69,7 +69,6 @@ func fetchPage() PortfolioPage {
 
 	data := buf.Bytes()
     page := unmarshallPage(data) 
-    fmt.Println(page)
 	return page
 }
 

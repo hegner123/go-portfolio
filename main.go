@@ -1,26 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-    "github.com/a-h/templ"
+
+	"github.com/a-h/templ"
 )
 
-
-
 func main() {
-	fmt.Println("--------------------------------------------------------------------------------------------------")
-    page := fetchPage()
-
+	printGreen("------------------------------------------------------------")
+	page := fetchPage()
 
 	component := portfolio(page)
 	http.Handle("/", templ.Handler(component))
-    //http.Handle("/blog", templ.Handler(blogArchive()))
+	//http.Handle("/blog", templ.Handler(blogArchive()))
 
-	fmt.Println("Listening on :3000")
-    err := http.ListenAndServe(":3000", nil)
-    if err != nil {
-        fmt.Println(err)
-    }
+	printCyan("Listening on :3000")
+	err := http.ListenAndServe(":3000", nil)
+	if err != nil {
+		printRedErr(err)
+	}
 
 }
