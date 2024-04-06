@@ -1,58 +1,84 @@
 package main
 
-
+import "fmt"
 
 templ portfolio(page PortfolioPage) {
-    <html>
-    <head>
-
-    <style>
-    html {
-        color:#ffffff;
-        background:#2f2f2f;
-        font-family: sans-serif;
+	<html>
+		<head>
+			<style>
+        html {
+            color: #ffffff;
+            background: #2f2f2f;
+            font-family: sans-serif;
         }
 
+        .project-image{
+            aspect-ratio: 16:9;
+            max-height: 60vh;
+            height:400px;
+            width:auto;
+            }
     </style>
-    <title>Michael Hegner</title>
-    </head>
-    <body>
-
-    @heroTitle(page.HeroTitle, page.Subtitle)
-    @aboutSection(page.AboutTitle, page.AboutBio) 
-        
-
-    </body>
-        
-    </html>
+			<title>Michael Hegner</title>
+		</head>
+		<body>
+			@heroTitle(page.HeroTitle, page.Subtitle)
+			@aboutSection(page.AboutTitle, page.AboutBio)
+			@projectSection(page.ProjectsTitle, page.Projects)
+		</body>
+	</html>
 }
 
+templ heroTitle(heroTitle string, subtitle string) {
+	<h1>{ heroTitle }</h1>
+	<h3>{ subtitle }</h3>
+}
 
-templ heroTitle(heroTitle string, subtitle string){
-    <h1>{heroTitle}</h1>
-    <h3>{subtitle}</h3>
+templ aboutSection(aboutTitle string, aboutBio MarkdownObject) {
+	<section>
+		<h3>{ aboutTitle }</h3>
+		for _, child := range aboutBio.Children {
+			switch child.Type {
+				case "h1":
+					@h1Tag(child.Children[0].Text)
+				case "p":
+					@pTag(child.Children[0].Text)
+				default:
+					<p>Element</p>
+			}
+		}
+	</section>
+}
 
+templ projectSection(pTitle string, projects []Project) {
+	@pTag(pTitle)
+	for _, project := range projects {
+		@pTag(project.Title)
+		{ fmt.Sprintln(project.Description.Children[0].Children[0].Text) }
+		if project.SiteLink != "" {
+			@aTag("Site Link", project.SiteLink)
+		}
+		if project.GithubLink != "" {
+			@aTag("Github", project.GithubLink)
+		}
+        if project.Image != "" {
+            @imgTag(project.Image)
+            }
+	}
+}
+
+templ h1Tag(text string) {
+	<h1>{ text }</h1>
+}
+
+templ pTag(text string) {
+	<p>{ text }</p>
+}
+
+templ aTag(label string, link templ.SafeURL) {
+	<a href={ link }>{ label }</a>
+}
+
+templ imgTag(url string){
+    <img src={ url } class="project-image"/>
     }
-
-
-
-templ aboutSection(aboutTitle string, aboutBio string){
-    <section>
-    <h3>{aboutTitle}</h3>
-    <p>
-        {aboutBio}
-    </p>
-    </section>
-
-    }
-
-
-
-
-
-
-
-
-
-
-

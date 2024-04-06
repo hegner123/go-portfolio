@@ -1,0 +1,10 @@
+package main
+
+import "fmt"
+
+templ blogArchive (blogPosts []BlogPost){
+    <h1>Blogs</h1>
+    for blog := range blogPosts {
+        {fmt.Sprintln(blog)}
+        }
+    }

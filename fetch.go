@@ -11,30 +11,6 @@ import (
 	"strings"
 )
 
-type PortfolioPage struct {
-	HeroTitle     string `json:"heroTitle"`
-	Subtitle      string `json:"subtitle"`
-	AboutTitle    string `json:"aboutTitle"`
-	AboutBio      string `json:"aboutBio"`
-	ProjectsTitle string `json:"projectsTitle"`
-	Projects      []Project
-	BlogTitle     string `json:"blogTitle"`
-	BlogPosts     []BlogPost
-}
-
-type Project struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	SiteLink    string `json:"siteLink"`
-	GithubLink  string `json:"githubLink"`
-	Image       string `json:"image"`
-}
-
-type BlogPost struct {
-	Title   string `json:"title"`
-	Date    string `json:"date"`
-	Content string `json:"content"`
-}
 
 var buf bytes.Buffer
 
@@ -53,6 +29,7 @@ func fetchPage() PortfolioPage {
                         subtitle
                         aboutTitle
                         aboutBio
+                        projectsTitle
                         project {
                             title
                             description
@@ -91,7 +68,6 @@ func fetchPage() PortfolioPage {
 	}
 
 	data := buf.Bytes()
-    fmt.Println(string(data))
     page := unmarshallPage(data) 
     fmt.Println(page)
 	return page
