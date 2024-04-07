@@ -1,0 +1,27 @@
+{
+  "name": "go-portfolio-cms",
+  "version": "1.0.0",
+  "description": "cms",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/hegner123/go-portfolio"
+  },
+  "keywords": [
+    "portfolio",
+    "cms"
+  ],
+  "author": "hegner123",
+  "license": "ISC",
+  "devDependencies": {
+    "@tinacms/cli": "^1.5.43",
+    "tinacms": "^1.6.1"
+  },
+  "dependencies": {
+    "eslint": "^9.0.0",
+    "typescript": "^5.4.4"
+  }
+}
